@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            height: 3000px;
+        }
+
+        #mySVG {
+            position: fixed;
+            top: 15%;
+            width: 400px;
+            height: 210px;
+            margin-left: -50px;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div>Scroll to see animmation</div>
+    <svg id="mySVG">
+        <path id="star" fill="none" stroke="red" stroke-width="3" d="M150 200 L225 0  L300 200 L150 50 L300 50 Z" />
+    </svg>
+    <script>
+        var star = document.getElementById("star");
+        var lenght = star.getTotalLength()
+        star.style.strokeDasharray = lenght;
+        star.style.strokeDashoffset = lenght;
+
+        window.addEventListener("scroll", myFunction);
+        function myFunction() {
+            var scrollpercent = (
+                document.body.scrollTop + document.documentElement.scrollTop
+            ) / (
+                    document.documentElement.scrollHeight -
+                    document.documentElement.clientHeight
+                )
+
+            var draw = lenght * scrollpercent;
+            star.style.strokeDashoffset = lenght - draw;
+
+        }
+       
+    </script>
+</body>
+
+</html>
