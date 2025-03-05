@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arc </title>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+     text
+          {
+              font-size:14px;
+              fill:white;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+  <body>    
+    <script>
+        let width = 700, height = 600, fullAngle = 2 * Math.PI;
+        let svg = d3.select("body").append("svg")
+                    .attr("width", width).attr("height", height)
+                    .style("background", "pink");
+
+        // let data = [{day:"Mon", startAngle:0, endAngle:.9},
+        //     {day:"Tue", startAngle:.9, endAngle:2.4},
+        //     {day:"Wed", startAngle:2.4, endAngle:4.2},
+        //     {day:"Thu", startAngle:4.2, endAngle:5},
+        //     {day:"Fri", startAngle:5, endAngle:6.28}];
+
+        // var circle = d3.arc()
+        //     .innerRadius(80)
+        //     .outerRadius(100)
+        //     .startAngle(0)
+        //     .endAngle(fullAngle);
+        
+         let items = [20, 40, 50, 70,35]
+
+         let data  = d3.pie()(items)
+
+        let segments = d3.arc()
+                        .innerRadius(20)
+                        .outerRadius(125)
+                        .padAngle(.05)
+                        .padRadius(50)
+                        .cornerRadius(4);
+        let sections = svg.append("g").attr("transform", "translate(300, 300)")
+            .selectAll("path").data(data);
+        sections.enter().append("path").attr("d", segments).attr("fill", "gray"); 
+        
+        let content = d3.select("g").selectAll("text").data(data);
+        content.enter().append("text").each(function(d){
+            let center = segments.centroid(d);
+            console.log(center);
+            d3.select(this).attr("x", center[0]).attr("y", center[1]).attr("dx", "-10px").text(d.day);
+        });
+    </script>
+  </body>
+</html> 
+

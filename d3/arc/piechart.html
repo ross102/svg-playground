@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arc </title>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+     text
+          {
+              font-size:14px;
+              fill:white;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+  <body>    
+     <script>
+
+        let width = 600, height = 500, spacing = 60;
+
+         let data =  [{ number: 10, grade: "F"},
+                        { number: 22, grade: "B"},
+                        { number: 27, grade: "A+"},
+                        { number: 15, grade: "D"},
+                        { number: 18, grade: "C"}
+                    ];
+
+        let svg = d3.select("body").append("svg")
+                    .attr("width", width - spacing)
+                    .attr("height", height - spacing)
+                    .style("background", "pink")
+
+        let colors = d3.scaleOrdinal(d3.schemeDark2)
+       
+        let pieData = d3.pie().sort(null).value(function(d){
+           return d.number
+        })(data);
+          
+        let selection = d3.arc()
+                          .innerRadius(0)
+                          .outerRadius(100)
+                          .padAngle(.10)
+                          .padRadius(10)
+
+        let container = svg.append("g").attr("transform", `translate(${spacing * 3}, ${spacing * 3})`)
+            
+        let chartSelection =  container.selectAll("path").data(pieData)
+                              .enter().append("path").attr("d", selection)
+                              .attr("fill", function(d) {
+                               
+                                  return colors(d.data.number)
+                              })
+
+        let chartText = d3.select("g").selectAll("text").data(pieData);
+                        chartText.enter().append("text").each(function(d) {
+                            let center = selection.centroid(d)
+                           
+                            d3.select(this).attr("x", center[0])
+                                           .attr("y", center[1])
+                                           .text(d.data.number)
+                        })
+
+        let legends   =  svg.append("g").attr("tranform", `translate(300, 200)`)
+                         .attr("class", "legends-wrapper")
+
+        let legend   =  svg.select("g.legends-wrapper").selectAll("rect").data(data);
+                        legend.enter().append("rect").attr("width", 30).attr("height", 30)
+                        .attr("y", 30)
+                        .attr("x", 0)
+                        .text(function(d) {
+                            return d.data.grade
+                        })
+
+
+
+        
+
+
+
+        
+
+
+                    
+     </script>
+  </body>
+</html> 
+

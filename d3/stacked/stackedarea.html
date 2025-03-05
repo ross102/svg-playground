@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stacked area</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+  <body>
+      <script>
+            let data = [
+                    {year:2001, desktops: 80, laptops: 210, printers: 50, monitors:60},
+                    {year: 2002, desktops: 130, laptops: 150, printers: 30, monitors:40},
+                    {year: 2003, desktops: 40, laptops: 200, printers: 45, monitors:80},
+                    {year: 2004, desktops: 70, laptops: 180, printers: 65, monitors:70},
+                    {year: 2005, desktops: 100, laptops: 160, printers: 70, monitors:40},
+                    {year: 2006, desktops: 90, laptops: 190, printers: 80, monitors:60}
+                ];
+
+
+        let width = 600, height = 500, spacing = 60;
+
+        let svg = d3.select('body').append('svg')
+                     .attr('width', width + spacing)
+                     .attr('height', height + spacing)
+                     .style('background-color', 'pink')
+                     .append('g').attr('transform', `translate(${spacing}, ${spacing / 2})`)
+          
+        let xScale = d3.scaleLinear()
+                       .domain([d3.min(data, (d, i) => {
+                       return d.year
+                       } ), d3.max(data, (d, i) => {
+                       return d.year
+                       } )])
+                       .range([0, width - spacing])
+
+        let yScale = d3.scaleLinear()
+                       .range([height - spacing, 0])
+        
+        let xAxis = d3.axisBottom(xScale).ticks(5).tickFormat((d) =>  d)
+
+        svg.append('g').attr('transform', `translate(0, ${height - spacing})`)
+            .call(xAxis)
+
+        let stack = d3.stack().keys(['desktops', 'laptops', 'printers', 'monitors'])
+        let stackedData = stack(data)
+        // console.log(stackedData)
+        let colors = ['lightblue', 'orange', 'grey', 'red']
+
+        yScale = yScale.domain([0, d3.max(stackedData, (d, i) => {
+            const max = d3.max(d, (d1, i1) => {
+                return d1[1]
+            })
+             return max
+        })])
+
+        let yAxis = d3.axisLeft(yScale);
+
+        svg.append('g').call(yAxis)
+
+        let area = d3.area()
+                     .x((d) => xScale(d.data.year))
+                     .y0((d) => yScale(d[0]))
+                     .y1((d) => yScale(d[1]))
+
+                     
+        let series = svg.selectAll('g.stacks').data(stackedData)
+                        .enter().append('g')
+                        .attr('class', 'stacks')
+                        
+            series.append('path')
+                  .attr('d', (d) => {
+                   return area(d)
+                  })
+                  .style('fill', (d, i) => colors[i])
+            
+                     
+ 
+      </script>  
+  </body>
+</html>
